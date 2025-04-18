@@ -1,14 +1,13 @@
 import os
-from linecache import cache
+from io import BytesIO
 
 import cv2
 import numpy as np
+import uvicorn
+from PIL import Image
+from fastapi import FastAPI, File, UploadFile, HTTPException
 
 from ai_detect import AiDetect
-from fastapi import FastAPI, File, UploadFile, Form, HTTPException
-from fastapi.responses import JSONResponse
-from io import BytesIO
-from PIL import Image
 
 # 创建 FastAPI 应用实例
 app = FastAPI()
@@ -27,22 +26,26 @@ ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"]
 ALLOWED_VIDEO_TYPES = ["video/mp4", "video/mpeg", "video/avi", "video/quicktime", "video/x-matroska"]
 
 # 全局变量存储对象
-ObjectDetect:AiDetect
+ObjectDetect: AiDetect
+
 
 # 将PIL图像转换为OpenCV格式
 def pil_to_cv2(pil_image):
     return cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
+
 
 # 定义根路由
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
 
+
 # 定义带参数的路由
 @app.get("/init")
 def init():
     global ObjectDetect
     ObjectDetect = AiDetect()
+
 
 # 定义 POST 请求路由
 @app.post("/face/analysis")
@@ -60,7 +63,8 @@ async def face_analysis(file: UploadFile = File(...)):
         image = Image.open(BytesIO(contents))
         # 转换为OpenCV格式
         frame = pil_to_cv2(image)
-        detect_result, face_result = ObjectDetect(frame)
+        for i in 100:
+            detect_result, face_result = ObjectDetect(frame)
 
         return {
             "detect_result": detect_result,
@@ -70,3 +74,5 @@ async def face_analysis(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"处理图片时出错: {str(e)}")
 
 
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8001)
