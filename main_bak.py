@@ -16,11 +16,11 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("yolov8_performance.log"),
+        logging.FileHandler("yks_performance.log"),
         logging.StreamHandler()
     ]
 )
-logger = logging.getLogger("YOLOv8-Performance")
+logger = logging.getLogger("YKS-Performance")
 
 # Parse arguments from user input.
 parser = ArgumentParser()
@@ -30,7 +30,6 @@ parser.add_argument("--cam", type=int, default=0,
                     help="The webcam index.")
 args = parser.parse_args()
 
-print(__doc__)
 print("OpenCV version: {}".format(cv2.__version__))
 
 
@@ -50,18 +49,6 @@ def cosine_similarity(x, y):
     num = x.dot(y.T)
     denom = np.linalg.norm(x) * np.linalg.norm(y)
     return abs(num / denom)
-
-
-# 获取应用程序的基本路径
-def resource_path(relative_path):
-    """ 获取资源的绝对路径 """
-    try:
-        # PyInstaller 创建临时文件夹并将路径存储在 _MEIPASS 中
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative_path)
 
 
 def run():

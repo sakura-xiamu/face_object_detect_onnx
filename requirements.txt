@@ -5,3 +5,7 @@ numpy
 psutil
 packaging
 pyinstaller
+fastapi
+uvicorn
+python-multipart
+pillow
