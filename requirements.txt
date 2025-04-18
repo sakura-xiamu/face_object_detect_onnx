@@ -1,0 +1,7 @@
+onnxruntime-directml
+insightface
+opencv-python
+numpy
+psutil
+packaging
+pyinstaller
